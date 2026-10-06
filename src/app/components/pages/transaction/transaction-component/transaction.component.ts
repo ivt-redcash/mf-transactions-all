@@ -139,7 +139,7 @@ export class TransactionComponent implements OnInit {
     let provider = this.provider || undefined;
     // return
     this.transactionService.getTransaction(entity, provider, status, dateStart, dateEnd, idServ?.toString(), pageSize, this.page, numDoc, this.count, 
-     supply, this.amountTransaction).subscribe({
+     this.amountTransaction, supply).subscribe({
       next: (value: any) => {
         if (value.statusCode === 201) {
           this.amountTransaction = 0;
