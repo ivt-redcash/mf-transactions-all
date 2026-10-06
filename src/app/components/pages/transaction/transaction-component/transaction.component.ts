@@ -81,6 +81,8 @@ export class TransactionComponent implements OnInit {
   public services: any;
   public masterStatusCons: any;
   @ViewChild(DynamicTableComponent) dynamic!: DynamicTableComponent;
+  public start!: Date;
+  public end!: Date;
 
   constructor(
     private readonly spinner: SpinnerService,
@@ -114,6 +116,10 @@ export class TransactionComponent implements OnInit {
     this.formOperation = this.fb.group({
       numOperation: ['', Validators.required],
     });
+    this.start = new Date();
+    this.start.setHours(0, 0, 0, 0);
+    this.end = new Date();
+    this.end.setHours(23, 59, 59, 999);
     this.formDate = this.fb.group({
       dateStart: [''],
       dateEnd: [''],
@@ -280,8 +286,8 @@ export class TransactionComponent implements OnInit {
   }
 
   clearSearch() {
-    this.formDate.get('dateEnd')?.setValue('')
-    this.formDate.get('dateStart')?.setValue('')
+    this.formDate.get('dateEnd')?.setValue(this.end)
+    this.formDate.get('dateStart')?.setValue(this.start)
     this.formDate.get('status')?.setValue('')
     this.formDate.get('entity')?.setValue('')
     this.formDate.get('idService')?.setValue('')
