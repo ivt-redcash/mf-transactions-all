@@ -27,6 +27,7 @@ export class TransactionComponent implements OnInit {
     { 'name': 'Recaudador', 'attribute': 'client' },
     { 'name': 'Proveedor', 'attribute': 'provider' },
     { 'name': 'Servicio', 'attribute': 'serviceName' },
+    { 'name': 'Suministro', 'attribute': 'supply' },
     { 'name': 'N°. Recibo', 'attribute': 'concep' },
     { 'name': 'Titular', 'attribute': 'bill' },
     { 'name': 'Monto', 'attribute': 'amountTransaction' },
@@ -118,6 +119,7 @@ export class TransactionComponent implements OnInit {
       dateEnd: [''],
       entity: [''],
       idService: [''],
+      supply: [''],
       numDoc: [''],
       status: [''],
       provider: [''],
@@ -130,12 +132,14 @@ export class TransactionComponent implements OnInit {
     let entity = this.entity || undefined;
     let status = this.status || undefined;
     let idServ = this.idService || undefined;
+    let supply = this.supply || undefined;
     let numDoc = this.numDoc || undefined;
     let dateStart = this.dateService.formatStartDate(this.dateStart).replace(/\//g, '') || undefined;
     let dateEnd = this.dateService.formatEndDate(this.dateEnd).replace(/\//g, '') || undefined
     let provider = this.provider || undefined;
     // return
-    this.transactionService.getTransaction(entity, provider, status, dateStart, dateEnd, idServ?.toString(), pageSize, this.page, numDoc, this.count, this.amountTransaction).subscribe({
+    this.transactionService.getTransaction(entity, provider, status, dateStart, dateEnd, idServ?.toString(), pageSize, this.page, numDoc, this.count, 
+     supply, this.amountTransaction).subscribe({
       next: (value: any) => {
         if (value.statusCode === 201) {
           this.amountTransaction = 0;
@@ -233,6 +237,7 @@ export class TransactionComponent implements OnInit {
     console.log("formulario busqueda: ", this.formDate)
     if (this.formDate.get('dateEnd')?.value == '' &&
       this.formDate.get('status')?.value == '' &&
+      this.formDate.get('supply')?.value == '' &&
       this.formDate.get('numDoc')?.value == '' &&
       this.formDate.get('idService')?.value == '' &&
       this.formDate.get('entity')?.value == '' &&
@@ -280,6 +285,7 @@ export class TransactionComponent implements OnInit {
     this.formDate.get('status')?.setValue('')
     this.formDate.get('entity')?.setValue('')
     this.formDate.get('idService')?.setValue('')
+    this.formDate.get('supply')?.setValue('')
     this.formDate.get('numDoc')?.setValue('')
     this.formDate.get('provider')?.setValue('')
     //limpiar tabla de transacciones
@@ -306,7 +312,9 @@ export class TransactionComponent implements OnInit {
   get entity() {
     return this.formDate?.get('entity')?.value;
   }
-
+  get supply() {
+    return this.formDate?.get('supply')?.value;
+  }
   get idService() {
     return this.formDate?.get('idService')?.value;
   }
