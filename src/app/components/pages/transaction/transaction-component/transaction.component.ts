@@ -121,8 +121,8 @@ export class TransactionComponent implements OnInit {
     this.end = new Date();
     this.end.setHours(23, 59, 59, 999);
     this.formDate = this.fb.group({
-      dateStart: [''],
-      dateEnd: [''],
+      dateStart: [this.start],
+      dateEnd: [this.end],
       entity: [''],
       idService: [''],
       supply: [''],
