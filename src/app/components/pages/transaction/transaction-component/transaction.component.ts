@@ -117,6 +117,7 @@ export class TransactionComponent implements OnInit, OnDestroy {
 
   public listServicesSelected: ServiceItem[] = [];
   public listUndServicesElectrocentro: any[] = [];
+  public listUndServicesElectrocentro2: any[] = [];
 
   public selectedCategory: boolean = false;
   public selectedDealer: boolean = false;
@@ -211,13 +212,41 @@ export class TransactionComponent implements OnInit, OnDestroy {
     this.formDate.get('idService')?.setValue(this.listServicesSelected.map(s => s.id));
 
     const undServiceControl = this.formDate.get('und_service')!;
-    const isElectrocentro = this.listServicesSelected.some(s => s.id === 'SAC0000011');
-    if (isElectrocentro) {
+    console.log('listServicesSelected',this.listServicesSelected)
+    const isElectrocentro = this.listServicesSelected.some(s => (s.id === 'SAC0000011' || s.name === 'ENOSA'));//ENOSA: SAC0002388(DESA) SAC0000156(PROD)
+    if (isElectrocentro) { //AQUI HABILITAR SI ES ELECTROCENTRO O ENOSA
       this.select_electrocentro = true;
     } else {
       this.select_electrocentro = false;
       undServiceControl.reset();
     }
+
+    //AQUI FILTRAR SOLO LA UNIDAD QUE LE CORRESPONDA SEGUN EL SERVICIO SELECCIONADO
+    const isEnosaSelected = this.listServicesSelected.some(
+      service => service.name === 'ENOSA'
+    );
+
+    const isElectrocentroSelected = this.listServicesSelected.some(
+      service => service.name === 'ELECTROCENTRO'
+    );
+
+    if (isEnosaSelected && isElectrocentroSelected) {
+      // Ambos servicios seleccionados: mostrar todos
+      this.listUndServicesElectrocentro2 = this.listUndServicesElectrocentro;
+
+    } else if (isEnosaSelected) {
+      // Solo ENOSA
+      this.listUndServicesElectrocentro2 = this.listUndServicesElectrocentro.filter(
+        item => item.service === 'ENOSA'
+      );
+
+    } else if (isElectrocentroSelected) {
+      // Solo ELECTROCENTRO
+      this.listUndServicesElectrocentro2 = this.listUndServicesElectrocentro.filter(
+        item => item.service !== 'ENOSA'
+      );
+    }
+
   }
 
   async cargarServicios(): Promise<void> {
@@ -289,7 +318,7 @@ export class TransactionComponent implements OnInit, OnDestroy {
   }
 
   private enrichTransactionItem(item: any): any {
-    const undServi = this.listUndServicesElectrocentro?.find((und: any) => String(und.id) === String(item.und_serv));
+    const undServi = this.listUndServicesElectrocentro2?.find((und: any) => String(und.id) === String(item.und_serv));
     const person = this.entityTypes.find((p: any) => p.servicePerson.idPerson === item.client);
     const provider = this.listProviders.find((p: any) => p.servicePerson.idPerson === item.provider);
     const agent = this.allAgents.find((p: AgentsItem) => p.retailer_id == item.id_retailer);
@@ -414,8 +443,17 @@ export class TransactionComponent implements OnInit, OnDestroy {
       this.entityTypes = provAndEntity.data.recaudadorTransform;
 
       const dluz = this.listProviders.find((p: any) => p.servicePerson.idPerson === `${environment.ID_PERSON_DLUZ}`);
-      if (dluz && dluz.servicePerson.und_serv !== 'N/A') try { this.listUndServicesElectrocentro = JSON.parse(dluz.servicePerson.und_serv.replace(/\\/g, '')); } catch { this.listUndServicesElectrocentro = []; }
-      else this.listUndServicesElectrocentro = [];
+      if (dluz && dluz.servicePerson.und_serv !== 'N/A'){
+        try { 
+          this.listUndServicesElectrocentro = JSON.parse(dluz.servicePerson.und_serv.replace(/\\/g, '')); 
+        } catch { 
+          this.listUndServicesElectrocentro = []; 
+        }
+      } else{
+        this.listUndServicesElectrocentro = [];
+      }
+      this.listUndServicesElectrocentro2 = this.listUndServicesElectrocentro;
+      console.log('this.listUndServicesElectrocentro',this.listUndServicesElectrocentro )
 
       try {
 

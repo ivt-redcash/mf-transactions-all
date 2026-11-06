@@ -49,7 +49,7 @@
                         <mat-form-field appearance="outline" class="col-md-3">
                             <mat-label>Negocio</mat-label>
                             <mat-select formControlName="und_service" multiple [disabled]="!select_electrocentro">
-                                <mat-option *ngFor="let undservice of listUndServicesElectrocentro"
+                                <mat-option *ngFor="let undservice of listUndServicesElectrocentro2"
                                     [value]="undservice.id">
                                     {{ undservice.name }}
                                 </mat-option>
